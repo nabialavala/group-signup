@@ -1,32 +1,16 @@
 import 'package:flutter/material.dart';
+import 'success_screen.dart';
 import 'welcome_screen.dart';
 
-void main() {
-  runApp(const MyApp());
-}
 
-// 🧓 Great-Grandparent
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Fun Signup App',
-      theme: ThemeData(primarySwatch: Colors.purple),
-      home: const SignupPage(),
-    );
-  }
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
-
-  @override
-  State<SignupPage> createState() => _SignupPageState();
-}
-
-class _SignupPageState extends State<SignupPage> {
+class _SignupScreenState extends State<SignupScreen> {
   // 🔑 The Global Key - acts like a remote control for the form
   final _formKey = GlobalKey<FormState>();
   
@@ -35,7 +19,23 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _birthDateController = TextEditingController();
+  bool _isPasswordVisible = false;
+  bool _isLoading = false;
 
+  Future<void> _selectDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1925),
+      lastDate: DateTime.now(),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        _birthDateController.text = "${pickedDate.month}/${pickedDate.day}/${pickedDate.year}";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,13 +100,45 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 16),
               
+              // Birth Date Field
+              TextFormField(
+                controller: _birthDateController,
+                readOnly: true,
+                decoration: const InputDecoration(
+                  labelText: 'Enter Date of Birth',
+                  prefixIcon: Icon(Icons.calendar_today),
+                  border: OutlineInputBorder(),
+                ),
+                onTap: _selectDate,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select your date of birth';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              
               // 🔒 Password Field
               TextFormField(
                 controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
+                //depends on boolean variable
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: Icon(Icons.lock),
+                  //button for pasword visibility
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
+                    onPressed: (){
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -145,14 +177,18 @@ class _SignupPageState extends State<SignupPage> {
               
               // 🚀 Sign Up Button
               ElevatedButton(
-                onPressed: () {
+                onPressed: _isLoading 
+                ? null
+                : () async {
                   if (_formKey.currentState!.validate()) {
-                    Navigator.push(
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    await Future.delayed(const Duration(seconds: 2));
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => WelcomeScreen(
-                          name: _nameController.text,
-                        )
+                        builder: (context) => SuccessScreen()
                       )
                     );
                   }
@@ -161,7 +197,16 @@ class _SignupPageState extends State<SignupPage> {
                   backgroundColor: Colors.purple,
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
-                child: const Text(
+                child: _isLoading
+                ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+                : const Text(
                   'Sign Up',
                   style: TextStyle(fontSize: 18),
                 ),
