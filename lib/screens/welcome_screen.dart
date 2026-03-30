@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  final String name;
 
   const WelcomeScreen({
     super.key, 
-    required this.name,
   });
 
   @override
@@ -15,7 +13,7 @@ class WelcomeScreen extends StatelessWidget {
         title: const Text('Welcome'),
       ),
       body: Center(
-        child: Text('Welcome, $name'),
+        child: Text('Welcome !'),
       ),
     );
   }
