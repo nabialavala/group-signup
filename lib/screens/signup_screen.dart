@@ -1,32 +1,15 @@
 import 'package:flutter/material.dart';
-import 'screens/welcome_screen.dart';
+import 'welcome_screen.dart';
 
-void main() {
-  runApp(const MyApp());
-}
 
-// 🧓 Great-Grandparent
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Fun Signup App',
-      theme: ThemeData(primarySwatch: Colors.purple),
-      home: const SignupPage(),
-    );
-  }
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
-
-  @override
-  State<SignupPage> createState() => _SignupPageState();
-}
-
-class _SignupPageState extends State<SignupPage> {
+class _SignupScreenState extends State<SignupScreen> {
   // 🔑 The Global Key - acts like a remote control for the form
   final _formKey = GlobalKey<FormState>();
   
