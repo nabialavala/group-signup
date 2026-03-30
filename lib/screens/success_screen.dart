@@ -16,8 +16,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
     super.initState();
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 3));
-
-    _confettiController.play(); // 
+    _confettiController.play();
   }
 
   @override
@@ -31,64 +30,78 @@ class _SuccessScreenState extends State<SuccessScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Success 🎉"),
-        backgroundColor: Colors.purple, 
+        backgroundColor: Colors.purple,
       ),
       body: Stack(
-        alignment: Alignment.center,
         children: [
 
-          // 🎉 Confetti
-          ConfettiWidget(
-            confettiController: _confettiController,
-            blastDirectionality: BlastDirectionality.explosive,
-            shouldLoop: false,
+          // 🎉 Confetti at top
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+            ),
           ),
 
-          //  Main Content
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          //  Centered Content
+          Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
 
-              const Icon(
-                Icons.check_circle,
-                color: Colors.purple,
-                size: 100,
-              ),
+                    const Icon(
+                      Icons.check_circle,
+                      color: Colors.purple,
+                      size: 100,
+                    ),
 
-              const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-              const Text(
-                "Success!",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                    const Text(
+                      "Success!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    const Text(
+                      "Your account has been created 🎉",
+                      textAlign: TextAlign.center,
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.purple,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          "Back",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+
+                  ],
                 ),
               ),
-
-              const SizedBox(height: 10),
-
-              const Text(
-                "Your account has been created 🎉",
-                textAlign: TextAlign.center,
-              ),
-
-              const SizedBox(height: 40),
-
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple, 
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                ),
-                onPressed: () {
-                  Navigator.pop(context); // goes back safely
-                },
-                child: const Text(
-                  "Back",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
