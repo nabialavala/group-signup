@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'welcome_screen.dart';
+import 'success_screen.dart';
 
 
 class SignupScreen extends StatefulWidget {
@@ -20,6 +20,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
 
   Future<void> _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -121,7 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
               TextFormField(
                 controller: _passwordController,
                 //depends on boolean variable
-                obscureText: _isPasswordVisible,
+                obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: Icon(Icons.lock),
@@ -175,14 +176,18 @@ class _SignupScreenState extends State<SignupScreen> {
               
               // 🚀 Sign Up Button
               ElevatedButton(
-                onPressed: () {
+                onPressed: _isLoading 
+                ? null
+                : () async {
                   if (_formKey.currentState!.validate()) {
-                    Navigator.push(
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    await Future.delayed(const Duration(seconds: 2));
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => WelcomeScreen(
-                          name: _nameController.text,
-                        )
+                        builder: (context) => SuccessScreen()
                       )
                     );
                   }
@@ -191,7 +196,16 @@ class _SignupScreenState extends State<SignupScreen> {
                   backgroundColor: Colors.purple,
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
-                child: const Text(
+                child: _isLoading
+                ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+                : const Text(
                   'Sign Up',
                   style: TextStyle(fontSize: 18),
                 ),
